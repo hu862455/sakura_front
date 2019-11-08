@@ -18,8 +18,6 @@ let http = axios.create({
 
 function apiAxios(method, url, params, response) {
   url = '/sakura/' + url;
-  console.log(url);
-
   http({
     method: method,
     url: url,

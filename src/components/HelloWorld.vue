@@ -55,10 +55,10 @@
         console.log(key, keyPath);
       },
       show(name) {
-        this.hackReset = false
+        this.hackReset = false;
         this.$nextTick(() => {
           this.hackReset = true
-        })
+        });
         this.name = name;
       }
     },
