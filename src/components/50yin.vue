@@ -32,7 +32,7 @@
       <el-divider></el-divider>
       <el-row>
         <!--    难度滑块      -->
-        <el-col :span="1">
+        <el-col :span="2">
           <div class="block">
             <div style="margin-bottom: 10px">难度:</div>
             <el-slider
@@ -49,21 +49,19 @@
         <el-col :span="20">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <span style="font-size: 50px">卡片名称</span>
+              <span style="font-size: 50px" v-if="typeFlag == '0'">{{cardInfo.romas}}</span>
+              <span style="font-size: 50px" v-else-if="typeFlag == '1'">{{cardInfo.pings}}</span>
+              <span style="font-size: 50px" v-else-if="typeFlag == '2'">{{cardInfo.pians}}</span>
             </div>
             <el-collapse v-model="activeName" accordion>
               <el-collapse-item title="罗马音" name="1">
-                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                <div>{{cardInfo.romas}}</div>
               </el-collapse-item>
               <el-collapse-item title="平假名" name="2">
-                <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
+                <div>{{cardInfo.pings}}</div>
               </el-collapse-item>
               <el-collapse-item title="片假名" name="3">
-                <div>简化流程：设计简洁直观的操作流程；</div>
-                <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
+                <div>{{cardInfo.pians}}</div>
               </el-collapse-item>
             </el-collapse>
           </el-card>
@@ -85,7 +83,7 @@
             return {
                 activeName: '', // 手风琴标志
                 difficult: 1, //难度
-                typeName: '清音', // 随机测试类型
+                typeName: '罗马音', // 随机测试类型
                 typeFlag: 0,
                 colNameFilters: [{
                     text: 'あ',
@@ -163,6 +161,7 @@
              */
             sliderChange(val) {
                 this.difficult = val;
+                this.testInit();
                 console.log(val);
             },
             typeNameChange(val){
@@ -181,6 +180,7 @@
                 }
             },
             testInit(){
+                this.cardInfo = '';
                 this.$api.get("/baseWord/randomBaseWordsByType", {
                     length: this.difficult,
                     type: this.type
@@ -188,8 +188,20 @@
                     console.log(response);
                     if (response.data.code === 200) {
                         let array = response.data.list;
+                        let romas = '';
+                        let pings = '';
+                        let pians = '';
                         array.forEach(item =>{
-                        })
+                            romas += item.roma;
+                            pings += item.ping;
+                            pians += item.pian;
+                        });
+                        this.cardInfo = {
+                            romas: romas,
+                            pings: pings,
+                            pians: pians
+                        };
+                        console.log(this.cardInfo);
                     }
                 })
             },
@@ -207,7 +219,6 @@
                 this.$api.get("/baseWord/getAllByType", {
                     type: this.type
                 }, response => {
-                    console.log(response);
                     if (response.data.code === 200) {
                         this.tableData = response.data.list;
                     }
@@ -237,6 +248,6 @@
 
 <style>
   .el-slider__runway {
-    left: 10px;
+    left: 30px;
   }
 </style>
